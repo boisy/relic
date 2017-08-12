@@ -1,1 +1,2 @@
-# Ragin-Basic
+# RELIC - Retargetable Embedded Language Independent Compiler
+

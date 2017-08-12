@@ -1,0 +1,8 @@
+package org.relic.ecoas.util;
+
+public enum InstructionClass
+{
+	INH, INDEXED, P2INH, P3INH, GEN, REL, P1REL, P2REL, GRP2, P2GEN, P3GEN, RTOR, P2RTOR, P3RTOR, NOIMM, P2NOIMM, P3NOIMM, IMM, P3IMM, LONGIMM, RLIST, SYS,
+	EQU, OTHER, FC, IF, RM, ELSE, ENDC
+};
+

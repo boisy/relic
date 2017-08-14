@@ -86,6 +86,12 @@ procedure
 	NEWLINE+
 	procedureBody[state]
 	{
+		for (int i = state.paramlist.size() - 1; i >=0; i--)
+		{
+    	    String s = (String)state.paramlist.get(i);
+			quadTable.add(new Quad(null, "stackpoke", null, null, s, null));
+		}
+
 		quadTable.add(new Quad(null, "ret", null, null, null, null));
 	}
 	;
@@ -98,22 +104,22 @@ procedureBody[ParseState state]
 paramDeclaration[ParseState state]
 	@init
 	{
-		ArrayList idlist = new ArrayList();
 	}
 	:	
 	PARAM ID
 	{
 		String id = state.currProcName + separator + $ID.text;
 
-		idlist.add(id);
+		state.paramlist.add(id);
 	}
 	(identList[state]
 	{
-		idlist.add(state.name);
+		state.paramlist.add(state.name);
 	}
 	)* COLON typeName[state]
 	{
-		Iterator iterator = idlist.iterator();
+		Iterator iterator = state.paramlist.iterator();
+		Integer i = 0;
 		while (iterator.hasNext())
 		{
 			String s = (String)iterator.next();
@@ -124,6 +130,9 @@ paramDeclaration[ParseState state]
 				return;
 			}
 			symbolTable.add(new Symbol(s, state.name, null, state.size, ++state.paramCount, false));
+//			quadTable.add(new Quad(null, "unstack", null, null, s, null));
+			quadTable.add(new Quad(null, "stackpeek", i.toString(), null, s, null));
+			i++;
 		}
 	}
 	;

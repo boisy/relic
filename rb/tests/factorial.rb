@@ -1,6 +1,3 @@
-DECLARE PROCEDURE factorial
-PARAM r,n : INTEGER
-
 PROCEDURE factorial
 PARAM r,n : INTEGER
 DIM i : INTEGER

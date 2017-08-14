@@ -15,6 +15,7 @@ public class ParseState extends RecognizerSharedState
 	public int index;
 	public int size;
 	public int idCount;
+	public ArrayList paramlist;
 
 	public ParseState()
 	{
@@ -28,5 +29,6 @@ public class ParseState extends RecognizerSharedState
 		index = 0;
 		size = 0;
 		idCount = 0;
+		paramlist = new ArrayList();
 	}
 }

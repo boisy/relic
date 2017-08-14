@@ -662,25 +662,27 @@ public class BackEndPPC extends RelicObject
                 Symbol src1 = (Symbol)symbolTable.get(q.src1);
                 Symbol src2 = (Symbol)symbolTable.get(q.src2);
                 Symbol dst = (Symbol)symbolTable.get(q.dst);
-		String regsrc1 = "r12";
-		String regsrc2 = "r13";
-		String regdst  = "r11";
+				String regsrc1 = "r12";
+				String regsrc2 = "r13";
+				String regdst  = "r11";
 
                 if (dst.type.equals("BOOLEAN") || dst.type.equals("BYTE"))
                 {
-			asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
-			asmTable.add(new GNUAsmLine(null, "lha", regdst + "," + lo16(q.dst) + "(" + regdst + ")", null));
-			asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,-4", "update stack"));
-			asmTable.add(new GNUAsmLine(null, "stw", regdst + ",0(r1)", "save on stack"));
-                        stackOffset += 4;
+                	Integer sizeOf = 4;
+					asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "lbz", regdst + "," + lo16(q.dst) + "(" + regdst + ")", null));
+					asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,-4", "update stack"));
+					asmTable.add(new GNUAsmLine(null, "stw", regdst + ",0(r1)", "save on stack"));
+					stackOffset += sizeOf;
                 }
                 else if (dst.type.equals("INTEGER"))
                 {
-			asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
-			asmTable.add(new GNUAsmLine(null, "lha", regdst + "," + lo16(q.dst) + "(" + regdst + ")", null));
-			asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,-4", "update stack"));
-			asmTable.add(new GNUAsmLine(null, "stw", regdst + ",0(r1)", "save on stack"));
-                        stackOffset += 4;
+                	Integer sizeOf = 4;
+					asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "lha", regdst + "," + lo16(q.dst) + "(" + regdst + ")", null));
+					asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,-" + sizeOf.toString(), "update stack"));
+					asmTable.add(new GNUAsmLine(null, "stw", regdst + ",0(r1)", "save on stack"));
+					stackOffset += sizeOf;
                 }
                 else if (dst.type.equals("REAL"))
                 {
@@ -692,21 +694,27 @@ public class BackEndPPC extends RelicObject
                 Symbol src1 = (Symbol)symbolTable.get(q.src1);
                 Symbol src2 = (Symbol)symbolTable.get(q.src2);
                 Symbol dst = (Symbol)symbolTable.get(q.dst);
-		String regsrc1 = "r12";
-		String regsrc2 = "r13";
-		String regdst = "r11";
+				String regsrc1 = "r12";
+				String regsrc2 = "r13";
+				String regdst = "r11";
 
                 if (dst.type.equals("BOOLEAN") || dst.type.equals("BYTE"))
                 {
-			asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,4", "adjust stack"));
-			asmTable.add(new GNUAsmLine(q.label, "lwz", regdst + ",0(r1)", null));
-                        stackOffset += 4;
+					asmTable.add(new GNUAsmLine(q.label, "lbz", regsrc1 + ",0(r1)", null));
+					asmTable.add(new GNUAsmLine(null, "addis", regdst + ",0," + hi16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "ori", regdst + "," + regdst + "," + lo16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "stb", regsrc1 + ",0(" + regdst + ")", null));
+					asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,4", "adjust stack"));
+					stackOffset += 4;
                 }
                 else if (dst.type.equals("INTEGER"))
                 {
-			asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,4", "adjust stack"));
-			asmTable.add(new GNUAsmLine(q.label, "lwz", regdst + ",0(r1)", null));
-                        stackOffset += 4;
+					asmTable.add(new GNUAsmLine(q.label, "lwz", regsrc1 + ",0(r1)", null));
+					asmTable.add(new GNUAsmLine(null, "addis", regdst + ",0," + hi16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "ori", regdst + "," + regdst + "," + lo16(q.dst), null));
+					asmTable.add(new GNUAsmLine(null, "sth", regsrc1 + ",0(" + regdst + ")", null));
+					asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,4", "adjust stack"));
+					stackOffset += 4;
                 }
                 else if (dst.type.equals("REAL"))
                 {
@@ -1242,8 +1250,8 @@ public class BackEndPPC extends RelicObject
 		}
 		else
 		{
-         asmTable.add(new GNUAsmLine(null, "addis", "r3,0," + hi16(q.dst), null));
-         asmTable.add(new GNUAsmLine(null, "lwz", "r3," + lo16(q.dst) + "(r3)", null));
+		         asmTable.add(new GNUAsmLine(null, "addis", "r3,0," + hi16(q.dst), null));
+		         asmTable.add(new GNUAsmLine(null, "lwz", "r3," + lo16(q.dst) + "(r3)", null));
 		}
 		asmTable.add(new GNUAsmLine(null, "li", "r0,1", null));
 		asmTable.add(new GNUAsmLine(null, "sc", null, null));
@@ -1251,9 +1259,62 @@ public class BackEndPPC extends RelicObject
 	
 	static void call(Quad q)
 	{
-		asmTable.add(new GNUAsmLine(q.label, "addi", "r1,r1,-32", q.comment));
 		asmTable.add(new GNUAsmLine(null, "bl", q.dst, null));
-		asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,32", null));
+	}
+	
+	static void stackpeek(Quad q)
+	{
+		Symbol src1 = (Symbol)symbolTable.get(q.src1);
+		Symbol src2 = (Symbol)symbolTable.get(q.src2);
+		Symbol dst = (Symbol)symbolTable.get(q.dst);
+		String regsrc1 = "r12";
+		String regsrc2 = "r13";
+		String regdst  = "r11";
+
+		Integer stackOffset = (dst.param - 1) * 4 + 16;
+		asmTable.add(new GNUAsmLine(q.label, "lwz", regsrc1 + "," + stackOffset.toString() + "(r1)", null));
+		asmTable.add(new GNUAsmLine(null, "addis", regdst + ",0," + hi16(q.dst), null));
+		asmTable.add(new GNUAsmLine(null, "ori", regdst + "," + regdst + "," + lo16(q.dst), null));
+		if (dst.type.equals("BOOLEAN") || dst.type.equals("BYTE"))
+		{
+			asmTable.add(new GNUAsmLine(null, "stb", regsrc1 + ",0(" + regdst + ")", null));
+		}
+		if (dst.type.equals("INTEGER"))
+		{
+			asmTable.add(new GNUAsmLine(null, "sth", regsrc1 + ",0(" + regdst + ")", null));
+		}
+		else if (dst.type.equals("REAL"))
+		{
+		}
+	}
+	
+	static void stackpoke(Quad q)
+	{
+		Symbol src1 = (Symbol)symbolTable.get(q.src1);
+		Symbol src2 = (Symbol)symbolTable.get(q.src2);
+		Symbol dst = (Symbol)symbolTable.get(q.dst);
+		String regsrc1 = "r12";
+		String regsrc2 = "r13";
+		String regdst  = "r11";
+
+		Integer stackOffset = (dst.param -1) * 4 + 16;	
+		if (dst.type.equals("BOOLEAN") || dst.type.equals("BYTE"))
+		{
+			asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
+			asmTable.add(new GNUAsmLine(null, "ori", regdst + "," + regdst + "," + lo16(q.dst), null));
+			asmTable.add(new GNUAsmLine(null, "lbz", regsrc1 + ",0(" + regdst + ")", null));
+			asmTable.add(new GNUAsmLine(null, "stw", regsrc1 + "," + stackOffset.toString() + "(r1)", null));
+		}
+		else if (dst.type.equals("INTEGER"))
+		{
+			asmTable.add(new GNUAsmLine(q.label, "addis", regdst + ",0," + hi16(q.dst), null));
+			asmTable.add(new GNUAsmLine(null, "ori", regdst + "," + regdst + "," + lo16(q.dst), null));
+			asmTable.add(new GNUAsmLine(null, "lhz", regsrc1 + ",0(" + regdst + ")", null));
+			asmTable.add(new GNUAsmLine(null, "stw", regsrc1 + "," + stackOffset.toString() + "(r1)", null));
+		}
+		else if (dst.type.equals("REAL"))
+		{
+		}
 	}
 	
 	static void translate()
@@ -1365,6 +1426,14 @@ public class BackEndPPC extends RelicObject
 			else if (q.opcode.equalsIgnoreCase("call"))
 			{
 				call(q);
+			}
+			else if (q.opcode.equalsIgnoreCase("stackpeek"))
+			{
+				stackpeek(q);
+			}
+			else if (q.opcode.equalsIgnoreCase("stackpoke"))
+			{
+				stackpoke(q);
 			}
 			else
 			{

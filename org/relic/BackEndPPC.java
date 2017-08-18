@@ -698,6 +698,14 @@ public class BackEndPPC extends RelicObject
 				String regsrc2 = "r13";
 				String regdst = "r11";
 
+		if (dst == null)
+		{
+			// no destination -- just alter the stack
+			asmTable.add(new GNUAsmLine(null, "addi", "r1,r1,4", "adjust stack"));
+			stackOffset += 4;
+			return;
+		}
+		else
                 if (dst.type.equals("BOOLEAN") || dst.type.equals("BYTE"))
                 {
 					asmTable.add(new GNUAsmLine(q.label, "lbz", regsrc1 + ",0(r1)", null));

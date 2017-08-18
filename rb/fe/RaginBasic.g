@@ -88,8 +88,12 @@ procedure
 	{
 		for (int i = state.paramlist.size() - 1; i >=0; i--)
 		{
-    	    String s = (String)state.paramlist.get(i);
-			quadTable.add(new Quad(null, "stackpoke", null, null, s, null));
+			String s = (String)state.paramlist.get(i);
+			Symbol sym = symbolTable.get(s);
+			if (sym.value == null)
+			{		
+				quadTable.add(new Quad(null, "stackpoke", null, null, s, null));
+			}
 		}
 
 		quadTable.add(new Quad(null, "ret", null, null, null, null));
@@ -130,7 +134,6 @@ paramDeclaration[ParseState state]
 				return;
 			}
 			symbolTable.add(new Symbol(s, state.name, null, state.size, ++state.paramCount, false));
-//			quadTable.add(new Quad(null, "unstack", null, null, s, null));
 			quadTable.add(new Quad(null, "stackpeek", i.toString(), null, s, null));
 			i++;
 		}
@@ -674,7 +677,16 @@ runStatement[ParseState state]
 		// unstack and copy back parameters
 		for (int i = 0; i < toList.size(); i++)
 		{
-			quadTable.add(new Quad(null, "unstack", null, null, (String)fromList.get(i), null));
+			String ss = (String)fromList.get(i);
+			Symbol sym = symbolTable.get(ss);
+			if (sym.value == null)
+			{
+				quadTable.add(new Quad(null, "unstack", null, null, (String)ss, null));
+			}
+			else
+			{
+				quadTable.add(new Quad(null, "unstack", null, null, null, null));
+			}
 		}
 	}
 	;
